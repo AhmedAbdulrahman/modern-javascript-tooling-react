@@ -1,38 +1,44 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const webpack = require("webpack");
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = {
 	entry: {
-		main: path.resolve(__dirname, "./src/index.js"),
+		main: path.resolve(__dirname, './src/index.js'),
 	},
 	output: {
-		path: path.resolve(__dirname, "./dist"),
-		filename: "[name].bundle.js",
+		path: path.resolve(__dirname, './dist'),
+		filename: '[name].bundle.js',
 	},
+	mode: 'development',
 	module: {
 		rules: [
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
-				use: ["babel-loader"],
+				use: ['babel-loader'],
 			},
 			{
 				test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
-				type: "asset/resource",
+				type: 'asset/resource',
 			},
 			{
-				test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
-				type: "asset/inline",
-			},
-			{
-				test: /\.(scss|css)$/,
+				test: /\.s[ac]ss$/i,
 				use: [
-					"style-loader",
-					"css-loader",
-					"postcss-loader",
-					"sass-loader",
+					// Creates `style` nodes from JS strings
+					'style-loader',
+					// Translates CSS into CommonJS
+					{
+						loader: 'css-loader',
+						options: {
+							modules: true,
+							importLoaders: 1,
+						},
+					},
+					'postcss-loader',
+					// Compiles Sass to CSS
+					'sass-loader',
 				],
 			},
 		],
@@ -40,20 +46,18 @@ module.exports = {
 	plugins: [
 		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
-			title: "React Modern Tooling",
-			filename: "index.html",
-			template: path.resolve(__dirname, "./src/template.html"),
+			title: 'React Modern Tooling',
+			filename: 'index.html',
+			template: path.resolve(__dirname, './src/template.html'),
 		}),
-		// Only update what has changed on hot reload
 		new webpack.HotModuleReplacementPlugin(),
 	],
-	mode: "development",
 	devServer: {
-		historyApiFallback: true,
-		contentBase: path.resolve(__dirname, "./dist"),
-		open: true,
+		contentBase: path.join(__dirname, 'dist'),
 		compress: true,
-		hot: true,
 		port: 8080,
+		open: true,
+		hot: true,
+		historyApiFallback: true,
 	},
-};
+}
